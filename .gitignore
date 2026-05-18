@@ -31,6 +31,9 @@ Thumbs.db
 # Coverage
 coverage/
 
+# Claude Code
+.claude/
+
 # Local working assets
 ChatGPT Image *.png
 1500Miglia Master Presentazione Slide.pptx
