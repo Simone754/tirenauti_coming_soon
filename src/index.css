@@ -48,7 +48,7 @@ input {
 .site-shell {
   position: relative;
   min-height: 100vh;
-  overflow: hidden;
+  overflow-x: clip; /* clip (not hidden) so position:sticky children work */
   background:
     linear-gradient(180deg, transparent 0%, rgba(2, 11, 20, 0.35) 40%, #020b14 100%),
     #020b14;
@@ -87,30 +87,37 @@ input {
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
-  width: min(100% - 3rem, 72rem);
+  width: min(100% - 3rem, 76rem);
   margin: 0 auto;
-  padding: 2.25rem 0 0;
+  padding: 0.6rem 0 0;
 }
 
 .nav__brand {
   display: inline-flex;
   align-items: center;
   min-width: 0;
+  margin-left: 0;
 }
 
+/* Logo: file è 2008×2008 quadrato con contenuto nel centro verticale.
+   object-fit:cover + object-position:center 48% taglia la striscia orizzontale
+   dove vive il testo del logo, scalando la larghezza al contenitore. */
 .nav__brand img {
-  width: clamp(8.5rem, 16vw, 13rem);
-  height: auto;
-  filter: drop-shadow(0 0.75rem 1.5rem rgba(0, 0, 0, 0.25));
+  width: clamp(16rem, 26vw, 30rem);
+  height: clamp(3.5rem, 6vw, 5.5rem);
+  object-fit: cover;
+  object-position: center 48%;
+  /* brightness(1.8) rinforza i pixel bianchi del logo senza drop-shadow che lo scurisce */
+  filter: brightness(1.8);
 }
 
 .nav__links {
   display: flex;
   align-items: center;
-  gap: clamp(1.5rem, 3vw, 2.7rem);
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  gap: clamp(1.4rem, 2.8vw, 2.6rem);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.10em;
   text-transform: uppercase;
 }
 
@@ -125,7 +132,8 @@ input {
 }
 
 .nav__links a {
-  color: rgba(247, 251, 255, 0.82);
+  color: #ffffff;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.70);
 }
 
 .nav__links a:hover,
@@ -145,20 +153,48 @@ input {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.4rem;
-  height: 2.4rem;
-  border: 1px solid rgba(247, 251, 255, 0.32);
-  border-radius: 999px;
+  /* nessun bordo/sfondo: il PNG porta già la sua forma circolare */
+  border: none;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  padding: 0;
   color: #ffffff;
-  font-size: 0.68rem;
-  font-weight: 900;
-  letter-spacing: 0.05em;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
+  font-size: 0;
 }
 
-.nav__social a:hover,
-.nav__social a:focus-visible,
+/* Immagine PNG con sfondo blu — nessun filtro, colori originali */
+.nav__social-img {
+  display: block;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  object-fit: cover;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.55));
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+.nav__social a:hover .nav__social-img,
+.nav__social a:focus-visible .nav__social-img {
+  transform: translateY(-2px);
+  filter: drop-shadow(0 0 10px rgba(32, 200, 255, 0.85)) brightness(1.15);
+}
+
+/* Contact social (Phase 4) — mantiene il vecchio stile SVG/testo */
+.contact__social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 1.5px solid rgba(247, 251, 255, 0.70);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.40);
+}
+
 .contact__social a:hover,
 .contact__social a:focus-visible {
   transform: translateY(-2px);
@@ -625,17 +661,17 @@ input {
   }
 
   .nav__brand img {
-    width: 8.8rem;
+    width: 14rem;
+    height: 3rem;
   }
 
   .nav__social {
-    gap: 0.45rem;
+    gap: 0.4rem;
   }
 
-  .nav__social a {
-    width: 2.05rem;
-    height: 2.05rem;
-    font-size: 0.6rem;
+  .nav__social-img {
+    width: 2rem;
+    height: 2rem;
   }
 
   .hero__content {
@@ -705,5 +741,1098 @@ input {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================
+   ImmersiveBoatJourney
+   ============================================================ */
+
+/* ── Scroll container (700vh = 600vh of scrollable range) ─── */
+.ibj-container {
+  height: 700vh;
+  position: relative;
+}
+
+/* ── Sticky viewport ─────────────────────────────────────── */
+.ibj-sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* ── Progress bar ────────────────────────────────────────── */
+.ibj-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--blue), rgba(0, 150, 255, 0.75));
+  transform-origin: left center;
+  transform: scaleX(0);
+  z-index: 20;
+  will-change: transform;
+}
+
+/* ── Phase label ─────────────────────────────────────────── */
+.ibj-phase-wrap {
+  position: absolute;
+  bottom: 2.2rem;
+  right: 2rem;
+  z-index: 20;
+}
+
+.ibj-phase-label {
+  font-size: 0.61rem;
+  font-weight: 900;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(32, 200, 255, 0.6);
+  opacity: 0;
+  will-change: opacity;
+}
+
+/* ── Nav override (absolute in sticky context) ───────────── */
+/* z-index 30 = sopra la vignette (20) → logo e testo non vengono scuriti dal gradiente */
+/* Grid 1fr auto 1fr: i link sono SEMPRE centrati sull'intera larghezza della pagina,
+   indipendentemente dalla larghezza del logo o delle icone social. */
+.nav.ibj-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  /* Sovrascrivi il flex del .nav base */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 1.2rem 2.4rem 0;
+  gap: 0;
+}
+
+/* Social → sempre in colonna 3 (anche quando i link sono display:none su mobile) */
+.nav.ibj-nav .nav__social {
+  grid-column: 3;
+  justify-self: end;
+}
+
+/* ── Sea background ──────────────────────────────────────── */
+.ibj-sea-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(32, 200, 255, 0.05) 0%, transparent 55%),
+    linear-gradient(180deg, #031525 0%, #020b14 50%, #010810 100%);
+}
+
+/* ── Boat exterior wrap ──────────────────────────────────── */
+.ibj-boat-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  transform-origin: 50% 45%;
+  will-change: transform, filter;
+}
+
+.ibj-boat-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% center;
+}
+
+/* ── Interior portal (clip-path circle reveal) ───────────── */
+.ibj-portal {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  clip-path: circle(0% at 50% 45%);
+  will-change: clip-path;
+}
+
+/* ── Interior dark background ────────────────────────────── */
+.ibj-interior-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 30%, #041d35 0%, #020d1e 40%, #010810 100%);
+}
+
+/* ── Atmospheric glow + grid ─────────────────────────────── */
+.ibj-interior-atm {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  will-change: opacity;
+}
+
+.ibj-glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.ibj-glow--a {
+  width: 60vmax;
+  height: 60vmax;
+  left: -12%;
+  top: -15%;
+  background: radial-gradient(circle, rgba(32, 200, 255, 0.075) 0%, transparent 65%);
+  filter: blur(70px);
+}
+
+.ibj-glow--b {
+  width: 45vmax;
+  height: 45vmax;
+  right: -10%;
+  bottom: -8%;
+  background: radial-gradient(circle, rgba(0, 90, 220, 0.09) 0%, transparent 65%);
+  filter: blur(60px);
+}
+
+.ibj-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(32, 200, 255, 0.032) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(32, 200, 255, 0.032) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse at 50% 50%, black 25%, transparent 72%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 25%, transparent 72%);
+}
+
+/* ── Section wrappers (all stacked, opacity-driven) ──────── */
+.ibj-section {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 1.5rem 2rem;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+/* ── Panel: 2-column card + image ────────────────────────── */
+.ibj-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.8rem, 3.5vw, 4rem);
+  width: min(100% - 3rem, 72rem);
+  align-items: center;
+}
+
+.ibj-section--rtl .ibj-panel {
+  direction: rtl;
+}
+.ibj-section--rtl .ibj-panel > * {
+  direction: ltr;
+}
+
+/* Glass card */
+.ibj-panel__card {
+  background: rgba(2, 11, 20, 0.58);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(32, 200, 255, 0.13);
+  border-radius: 1.6rem;
+  padding: clamp(1.6rem, 3vw, 2.8rem);
+  box-shadow:
+    0 1.5rem 4rem rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.055);
+}
+
+.ibj-panel__label {
+  margin: 0 0 0.9rem;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
+.ibj-panel__title {
+  margin: 0 0 1.1rem;
+  font-size: clamp(1.9rem, 3.6vw, 3.4rem);
+  font-weight: 900;
+  line-height: 1.0;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.ibj-panel__line {
+  display: block;
+}
+
+.ibj-panel__desc {
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+  font-size: 0.96rem;
+  line-height: 1.73;
+}
+
+.ibj-panel__stat {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.ibj-panel__stat strong {
+  font-size: clamp(2.6rem, 5.5vw, 4.5rem);
+  font-weight: 900;
+  color: var(--blue);
+  line-height: 1;
+  text-shadow: 0 0 2.5rem rgba(32, 200, 255, 0.45);
+}
+
+.ibj-panel__stat span {
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(247, 251, 255, 0.52);
+}
+
+/* Image side */
+.ibj-panel__img-wrap {
+  position: relative;
+}
+
+.ibj-panel__img-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 1.4rem;
+  background: linear-gradient(
+    135deg,
+    rgba(32, 200, 255, 0.30) 0%,
+    transparent 55%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ibj-panel__img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 1.3rem;
+  border: 1px solid rgba(32, 200, 255, 0.18);
+  box-shadow:
+    0 2rem 5rem rgba(0, 0, 0, 0.58),
+    0 0 2.5rem rgba(32, 200, 255, 0.05);
+}
+
+/* ── Hotspots ────────────────────────────────────────────── */
+.ibj-hotspot {
+  position: absolute;
+  z-index: 6;
+  opacity: 0;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  will-change: opacity;
+}
+
+.ibj-hotspot__ring {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(32, 200, 255, 0.40);
+  top: 50%;
+  left: 5px;
+  transform: translate(-50%, -50%);
+  animation: hotRing 2.6s ease-out infinite;
+}
+
+.ibj-hotspot__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 12px rgba(32, 200, 255, 0.75);
+  flex-shrink: 0;
+}
+
+.ibj-hotspot__label {
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--blue);
+  white-space: nowrap;
+  background: rgba(2, 11, 20, 0.78);
+  border: 1px solid rgba(32, 200, 255, 0.26);
+  border-radius: 5px;
+  padding: 4px 10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+@keyframes hotRing {
+  0%   { transform: translate(-50%, -50%) scale(1);   opacity: 0.7; }
+  100% { transform: translate(-50%, -50%) scale(2.6); opacity: 0;   }
+}
+
+/* ── CTA panel ───────────────────────────────────────────── */
+.ibj-cta {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6rem 2rem 2rem;
+  z-index: 7;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+.ibj-cta__eyebrow {
+  margin: 0 0 0.9rem;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
+.ibj-cta__title {
+  margin: 0 0 0.9rem;
+  font-size: clamp(2.8rem, 6.5vw, 5.8rem);
+  font-weight: 900;
+  line-height: 1.0;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-shadow: 0 0 3.5rem rgba(32, 200, 255, 0.14);
+}
+
+.ibj-cta__copy {
+  max-width: 32rem;
+  margin: 0 0 2rem;
+  color: var(--muted);
+  font-size: 1.03rem;
+  line-height: 1.73;
+}
+
+/* ── Hero text overlay ───────────────────────────────────── */
+.ibj-hero-overlay {
+  position: absolute;
+  z-index: 10;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: min(100% - 3rem, 72rem);
+  margin: 0 auto;
+  padding: 0 0 clamp(4rem, 9vh, 8rem);
+  will-change: opacity, transform;
+}
+
+.ibj-hero-h1 {
+  max-width: 7.4ch;
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(4.4rem, 11vw, 9.6rem);
+  font-weight: 900;
+  line-height: 0.82;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow: 0 1.2rem 2.5rem rgba(0, 0, 0, 0.32);
+}
+
+.ibj-hero-h1 span {
+  display: block;
+  color: var(--blue);
+  text-shadow: 0 0 1.8rem rgba(32, 200, 255, 0.3);
+}
+
+.ibj-hero-copy {
+  max-width: 29rem;
+  margin: 1.4rem 0 2rem;
+  color: #ffffff;
+  font-size: clamp(1.2rem, 2.4vw, 1.9rem);
+  line-height: 1.3;
+}
+
+/* ── Scroll hint ─────────────────────────────────────────── */
+.ibj-scroll-hint {
+  position: absolute;
+  bottom: 2.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  will-change: opacity;
+  pointer-events: none;
+}
+
+.ibj-scroll-hint span {
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: rgba(247, 251, 255, 0.62);
+}
+
+.ibj-scroll-line {
+  width: 1px;
+  height: 50px;
+  background: linear-gradient(to bottom, rgba(32, 200, 255, 0.55), transparent);
+  position: relative;
+  overflow: hidden;
+}
+
+.ibj-scroll-dot {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--blue);
+  animation: scrollDrop 1.9s ease infinite;
+}
+
+@keyframes scrollDrop {
+  0%   { top: -4px;  opacity: 1;   }
+  85%  { opacity: 0.4; }
+  100% { top: 54px;  opacity: 0;   }
+}
+
+/* ── Responsive: tablet ──────────────────────────────────── */
+@media (max-width: 900px) {
+  .ibj-panel {
+    grid-template-columns: 1fr;
+    gap: 1.4rem;
+  }
+
+  .ibj-section--rtl .ibj-panel {
+    direction: ltr;
+  }
+
+  .ibj-panel__img-wrap {
+    order: -1;
+  }
+
+  .ibj-panel__img {
+    aspect-ratio: 16 / 9;
+  }
+
+  .ibj-panel__card {
+    padding: 1.5rem 1.4rem;
+  }
+
+  .ibj-hero-overlay {
+    width: min(100% - 2rem, 72rem);
+    padding-bottom: clamp(3rem, 8vh, 6rem);
+  }
+}
+
+/* ── Responsive: mobile ──────────────────────────────────── */
+@media (max-width: 640px) {
+  .ibj-container {
+    height: 580vh;
+  }
+
+  .ibj-section {
+    align-items: center;
+    padding: 5.5rem 1rem 1.5rem;
+  }
+
+  /* Single-column card only — hide image to fit in 100svh */
+  .ibj-panel {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .ibj-panel__img-wrap {
+    display: none;
+  }
+
+  .ibj-panel__card {
+    padding: 1.6rem 1.4rem 1.8rem;
+  }
+
+  .ibj-panel__title {
+    font-size: clamp(1.8rem, 8vw, 2.8rem);
+  }
+
+  .ibj-panel__desc {
+    font-size: 0.9rem;
+    margin-bottom: 1.2rem;
+  }
+
+  /* Simplify: hide decorative elements on mobile */
+  .ibj-hotspot,
+  .ibj-glow,
+  .ibj-grid,
+  .ibj-phase-wrap {
+    display: none;
+  }
+
+  .ibj-hero-overlay {
+    width: min(100% - 2rem, 72rem);
+    padding-bottom: clamp(3.5rem, 7vh, 5.5rem);
+  }
+
+  .ibj-hero-h1 {
+    font-size: clamp(3.7rem, 18vw, 5.8rem);
+  }
+
+  .ibj-hero-copy {
+    max-width: 18rem;
+    font-size: 1.2rem;
+  }
+
+  .ibj-cta__title {
+    font-size: clamp(2.2rem, 11vw, 3.5rem);
+  }
+}
+
+/* ── Reduced motion: static layout ──────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .ibj-container {
+    height: auto;
+  }
+
+  .ibj-sticky {
+    position: relative;
+    height: auto;
+    overflow: visible;
+  }
+
+  .ibj-boat-wrap,
+  .ibj-portal,
+  .ibj-progress,
+  .ibj-hotspot,
+  .ibj-scroll-hint,
+  .ibj-phase-wrap {
+    display: none;
+  }
+
+  .ibj-interior-bg,
+  .ibj-interior-atm {
+    opacity: 1;
+    display: block;
+    position: relative;
+  }
+
+  .ibj-sea-bg {
+    min-height: 40vh;
+  }
+
+  .ibj-section {
+    position: relative;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    padding: 3rem 1.5rem;
+  }
+
+  .ibj-hero-overlay {
+    position: relative;
+    opacity: 1 !important;
+    transform: none !important;
+    padding: 8rem 0 4rem;
+    width: min(100% - 3rem, 72rem);
+    margin: 0 auto;
+  }
+
+  .bsj-container {
+    height: auto;
+  }
+  .bsj-sticky {
+    position: relative;
+    height: auto;
+    overflow: visible;
+  }
+  .bsj-img-layer {
+    position: relative;
+    opacity: 1 !important;
+    transform: none !important;
+    height: 100vh;
+  }
+  .bsj-img-layer + .bsj-img-layer {
+    display: none; /* show only first image */
+  }
+  .bsj-vignette,
+  .ibj-progress,
+  .ibj-scroll-hint,
+  .ibj-phase-wrap {
+    display: none;
+  }
+  .bsj-text-anchor {
+    position: relative;
+    transform: none !important;
+    bottom: auto;
+    padding: 2rem 1.5rem;
+  }
+  .bsj-text {
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+
+  .ibj-cta {
+    position: relative;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    padding: 4rem 2rem;
+  }
+}
+
+/* ============================================================
+   BoatScrollJourney  (bsj-*)
+   ============================================================ */
+
+/* ── Scroll container ────────────────────────────────────── */
+.bsj-container {
+  height: 800vh;
+  position: relative;
+}
+
+/* ── Sticky viewport ─────────────────────────────────────── */
+.bsj-sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  background: #010810;
+}
+
+/* ── Cinematic vignette + top gradient per navbar ─────────── */
+.bsj-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background:
+    /* gradiente scuro in testa → logo e nav sempre leggibili */
+    linear-gradient(to bottom, rgba(2, 11, 20, 0.72) 0%, rgba(2, 11, 20, 0) 20%),
+    /* vignetta radiale ai bordi */
+    radial-gradient(ellipse at 50% 50%, transparent 28%, rgba(0, 0, 0, 0.52) 100%);
+  pointer-events: none;
+}
+
+/* ── Image layers ────────────────────────────────────────── */
+.bsj-img-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  will-change: opacity, transform;
+  /* z-index set inline: i+1, so later phases render on top */
+}
+
+.bsj-img-layer img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ── Text anchors (static positioning) ──────────────────── */
+.bsj-text-anchor {
+  position: absolute;
+  bottom: clamp(20vh, 28vh, 16rem);
+  z-index: 30;
+  pointer-events: none;
+  max-width: min(90vw, 42rem);
+}
+
+.bsj-text-anchor--left {
+  left: clamp(1.4rem, 6vw, 6rem);
+}
+
+.bsj-text-anchor--right {
+  right: clamp(1.4rem, 6vw, 6rem);
+  text-align: right;
+}
+
+.bsj-text-anchor--center {
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  max-width: min(92vw, 48rem);
+}
+
+/* ── Text — fluttuante, senza card ──────────────────────── */
+.bsj-text {
+  will-change: opacity, transform;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+.bsj-text__label {
+  margin: 0 0 0.8rem;
+  font-size: 0.70rem;
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--blue);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.75);
+}
+
+.bsj-text__title {
+  margin: 0 0 1.1rem;
+  font-size: clamp(2.2rem, 4.2vw, 3.8rem);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-shadow:
+    0 0.4rem 2.8rem rgba(0, 0, 0, 0.70),
+    0 2px 8px rgba(0, 0, 0, 0.55);
+}
+
+.bsj-text__title-line {
+  display: block;
+}
+
+/* "Soon" in ciano nella Phase 0 */
+.bsj-text__title-line--cyan {
+  color: var(--blue);
+  text-shadow:
+    0 0 2.2rem rgba(32, 200, 255, 0.40),
+    0 2px 10px rgba(0, 0, 0, 0.55);
+}
+
+.bsj-text__desc {
+  margin: 0 0 1.3rem;
+  color: rgba(220, 235, 255, 0.90);
+  font-size: 0.97rem;
+  line-height: 1.72;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.65);
+}
+
+/* ── Bottone "Scopri di più" (Phase 0) ───────────────────── */
+.bsj-scroll-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 1.6rem;
+  padding: 0.72rem 1.75rem;
+  border: 1.5px solid rgba(247, 251, 255, 0.62);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #ffffff;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+  font-family: inherit;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.bsj-scroll-cta:hover,
+.bsj-scroll-cta:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--blue);
+  background: rgba(32, 200, 255, 0.12);
+  outline: none;
+}
+
+.bsj-scroll-cta__arrow {
+  display: inline-block;
+  font-size: 0.95rem;
+  animation: arrowBounce 1.9s ease infinite;
+}
+
+@keyframes arrowBounce {
+  0%, 100% { transform: translateY(0); }
+  55%       { transform: translateY(4px); }
+}
+
+.bsj-text__cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.85rem;
+  padding: 0 1.5rem;
+  border: 1px solid rgba(32, 200, 255, 0.72);
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 112, 255, 0.58),
+    rgba(32, 200, 255, 0.68)
+  );
+  box-shadow: 0 0.8rem 2rem rgba(0, 100, 255, 0.28);
+  text-decoration: none;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.bsj-text__cta:hover,
+.bsj-text__cta:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 1.2rem 2.4rem rgba(0, 100, 255, 0.40);
+}
+
+/* ── TV Carousel overlay (Phase 2) ──────────────────────── */
+/*
+ * Posiziona il riquadro esattamente sopra lo schermo TV in immagine3.png.
+ * Modifica le custom properties se lo schermo non si allinea.
+ */
+.bsj-tv-overlay {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -52%);
+  width: min(48vw, 38rem);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 10px;
+  opacity: 0.96;
+  box-shadow: 0 2rem 6rem rgba(0,0,0,0.70);
+}
+
+.bsj-tv-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  will-change: opacity;
+}
+
+/* ── Descrizione TV (Phase 2, destra) ───────────────────── */
+.bsj-text--tvdesc {
+  max-width: clamp(13rem, 22vw, 20rem);
+  text-align: right;
+}
+
+.bsj-text--tvdesc .bsj-text__label {
+  text-align: right;
+}
+
+.bsj-text--tvdesc .bsj-text__desc {
+  font-size: 0.83rem;
+  line-height: 1.65;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.80);
+}
+
+/* ── Stats card (Phase 1) ────────────────────────────────── */
+.bsj-text--stats {
+  min-width: clamp(16rem, 38vw, 28rem);
+}
+
+.bsj-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.6rem 0 1.2rem;
+}
+
+.bsj-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 2rem;
+  gap: 0.25rem;
+}
+
+.bsj-stat__num {
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: #fff;
+  text-shadow: 0 4px 24px rgba(0,0,0,0.65);
+}
+
+.bsj-stat__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent, #20c8ff);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.55);
+}
+
+.bsj-stat__divider {
+  width: 1px;
+  height: 3.5rem;
+  background: rgba(255, 255, 255, 0.22);
+  flex-shrink: 0;
+}
+
+/* ── Hero modifier (Phase 3, centro) ────────────────────── */
+.bsj-text--hero .bsj-text__title {
+  font-size: clamp(2rem, 3.6vw, 3.4rem);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.9rem;
+}
+
+.bsj-text--hero .bsj-text__label {
+  font-size: 0.70rem;
+  letter-spacing: 0.30em;
+  margin-bottom: 0.7rem;
+}
+
+/* ── Crew card (Phase 3) ─────────────────────────────────── */
+.bsj-text--crew {
+  min-width: clamp(18rem, 38vw, 30rem);
+}
+
+.bsj-crew {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.3rem;
+}
+
+.bsj-crew__social {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.bsj-crew__social a {
+  color: rgba(255, 255, 255, 0.70);
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+
+.bsj-crew__social a:hover {
+  color: #fff;
+}
+
+.bsj-crew__dot {
+  color: rgba(255, 255, 255, 0.30);
+  font-size: 1rem;
+}
+
+/* ── Loghi Fase 4 (crew section) ─────────────────────────── */
+.bsj-crew-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4rem;
+  margin-top: 1.6rem;
+  flex-wrap: wrap;
+}
+
+/* Tile frosted-glass che contiene ciascun logo */
+.bsj-crew-logo-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1.1rem;
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0.8rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* Mark (bottiglia) — quadrato, più piccolo */
+.bsj-crew-logo--mark {
+  height: clamp(2.6rem, 5vw, 3.8rem);
+  width: auto;
+}
+
+/* Wordmark (1500 Miglia Festival) — orizzontale */
+.bsj-crew-logo--wordmark {
+  height: clamp(2.0rem, 3.6vw, 2.8rem);
+  width: auto;
+}
+
+/* ── Responsive: tablet ──────────────────────────────────── */
+@media (max-width: 900px) {
+  .bsj-text-anchor--right {
+    right: 1.2rem;
+  }
+  .bsj-text-anchor--left {
+    left: 1.2rem;
+  }
+}
+
+/* ── Responsive: mobile ──────────────────────────────────── */
+@media (max-width: 640px) {
+  .bsj-container {
+    height: 650vh;
+  }
+
+  .bsj-text-anchor {
+    bottom: 5vh;
+    max-width: min(92vw, 36rem);
+  }
+
+  .bsj-text-anchor--center {
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: min(92vw, 36rem);
+  }
+
+  .bsj-text {
+    padding: 1.3rem 1.4rem;
+    border-radius: 1.2rem;
+  }
+
+  .bsj-text__title {
+    font-size: clamp(1.6rem, 7.5vw, 2.4rem);
+  }
+
+  .bsj-text__desc {
+    font-size: 0.88rem;
+  }
+
+  .bsj-vignette {
+    background: radial-gradient(
+      ellipse at 50% 60%,
+      transparent 20%,
+      rgba(0, 0, 0, 0.65) 100%
+    );
   }
 }
