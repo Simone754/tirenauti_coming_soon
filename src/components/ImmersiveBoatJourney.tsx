@@ -1,15 +1,16 @@
 /**
- * ImmersiveBoatJourney — 4 fasi
+ * ImmersiveBoatJourney — 5 fasi
  *
  *  0  img1  Coming Soon
  *  1  img2  10 tappe / 6 regioni / 2 mesi
  *  2  img3  Carosello slide dentro lo schermo TV
  *  3  img4  Entra nella crew + contatti
+ *  4  img5  Partner & Sponsor (underwater)
  *
  * Pure RAF + scroll — zero dipendenze esterne.
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import whiteLogo    from "../../ppt_refs/slide1-white-logo.png";
 import logoMark     from "../../assets/tirrenauti-mark.png";
 import logoWordmark from "../../assets/1500-miglia-festival-logo.png";
@@ -20,6 +21,7 @@ import img1 from "../../immagine1.png";
 import img2 from "../../immagine2.png";
 import img3 from "../../immagine3.png";
 import img4 from "../../immagone4.png";
+import img5 from "../../immagine5.png";
 import slide1 from "../../slide1.png";
 import slide2 from "../../slide2.png";
 import slide3 from "../../slide3.png";
@@ -28,6 +30,63 @@ import slide5 from "../../slide5.png";
 import slide6 from "../../slide6.png";
 
 const SLIDES = [slide1, slide2, slide3, slide4, slide5, slide6];
+
+// ─── Sponsor logos ────────────────────────────────────────────────────────────
+// Media Partners (3)
+import spM1 from "../assets/sponsors/mediapartner1.png";
+import spM2 from "../assets/sponsors/mediapartner2.png";
+import spM3 from "../assets/sponsors/media partner3.png";
+// Partners Tecnici (12)
+import spT1  from "../assets/sponsors/sponsor-10.png";
+import spT2  from "../assets/sponsors/sponsor-11.png";
+import spT3  from "../assets/sponsors/sponsor-12.png";
+import spT4  from "../assets/sponsors/sponsor-13.png";
+import spT5  from "../assets/sponsors/sponsor-15.png";
+import spT6  from "../assets/sponsors/sponsor-16.png";
+import spT7  from "../assets/sponsors/sponsor-17.jpeg";
+import spT8  from "../assets/sponsors/sponsor-18.png";
+import spT9  from "../assets/sponsors/sponsor-19.png";
+import spT10 from "../assets/sponsors/sponsor-20.png";
+import spT11 from "../assets/sponsors/sponsor-21.png";
+import spT12 from "../assets/sponsors/sponsor-22.png";
+// Patrocinato da (7)
+import spP1 from "../assets/sponsors/patrocinio1.png";
+import spP2 from "../assets/sponsors/patrocinio2.png";
+import spP3 from "../assets/sponsors/patrocinio3.png";
+import spP4 from "../assets/sponsors/patrocinio4.png";
+import spP5 from "../assets/sponsors/patrocinio5.png";
+import spP6 from "../assets/sponsors/patrocinio6.png";
+import spP7 from "../assets/sponsors/patrocinio7.png";
+
+// TODO: aggiornare gli url con i siti ufficiali
+const MEDIA_PARTNERS = [
+  { logo: spM1, name: "Media Partner 1", url: "#" },
+  { logo: spM2, name: "Media Partner 2", url: "#" },
+  { logo: spM3, name: "Media Partner 3", url: "#" },
+];
+const TECNICI_PARTNERS = [
+  { logo: spT1,  name: "Partner Tecnico 1",  url: "#" },
+  { logo: spT2,  name: "Partner Tecnico 2",  url: "#" },
+  { logo: spT3,  name: "Partner Tecnico 3",  url: "#" },
+  { logo: spT4,  name: "Partner Tecnico 4",  url: "#" },
+  { logo: spT5,  name: "Partner Tecnico 5",  url: "#" },
+  { logo: spT6,  name: "Partner Tecnico 6",  url: "#" },
+  { logo: spT7,  name: "Partner Tecnico 7",  url: "#" },
+  { logo: spT8,  name: "Partner Tecnico 8",  url: "#" },
+  { logo: spT9,  name: "Partner Tecnico 9",  url: "#" },
+  { logo: spT10, name: "Partner Tecnico 10", url: "#" },
+  { logo: spT11, name: "Partner Tecnico 11", url: "#" },
+  { logo: spT12, name: "Partner Tecnico 12", url: "#" },
+];
+const PATROCINI = [
+  { logo: spP1, name: "Patrocinio 1", url: "#" },
+  { logo: spP2, name: "Patrocinio 2", url: "#" },
+  { logo: spP3, name: "Patrocinio 3", url: "#" },
+  { logo: spP4, name: "Patrocinio 4", url: "#" },
+  { logo: spP5, name: "Patrocinio 5", url: "#" },
+  { logo: spP6, name: "Patrocinio 6", url: "#" },
+  { logo: spP7, name: "Patrocinio 7", url: "#" },
+];
 
 const instagramUrl = "https://www.instagram.com/1500migliafestival/";
 const facebookUrl  = "https://www.facebook.com/1500migliafestival/";
@@ -59,33 +118,41 @@ const PHASES: Phase[] = [
   {
     img: img1, alt: "Barca a vela al tramonto sul Tirreno",
     fadeIn:   [-0.01, 0.00],
-    peak:     [0.00,  0.20],
-    fadeOut:  [0.20,  0.27],
+    peak:     [0.00,  0.155],
+    fadeOut:  [0.155, 0.21],
     scaleIn: 1.00, scalePeak: 1.05, scaleOut: 1.08,
   },
   // ── 1  Le cifre ────────────────────────────────────────────────────────────
   {
     img: img2, alt: "Vista dal ponte della barca al tramonto",
-    fadeIn:   [0.20,  0.27],
-    peak:     [0.27,  0.47],
-    fadeOut:  [0.47,  0.54],
+    fadeIn:   [0.155, 0.21],
+    peak:     [0.21,  0.365],
+    fadeOut:  [0.365, 0.42],
     scaleIn: 1.06, scalePeak: 1.10, scaleOut: 1.13,
   },
   // ── 2  Salotto (TV carousel) ───────────────────────────────────────────────
   {
     img: img3, alt: "Interno lussuoso della barca — salotto con TV",
-    fadeIn:   [0.47,  0.54],
-    peak:     [0.54,  0.72],
-    fadeOut:  [0.72,  0.79],
+    fadeIn:   [0.365, 0.42],
+    peak:     [0.42,  0.575],
+    fadeOut:  [0.575, 0.63],
     scaleIn: 1.11, scalePeak: 1.14, scaleOut: 1.11,
   },
   // ── 3  Crew + contatti ────────────────────────────────────────────────────
   {
     img: img4, alt: "Barca con vela colorata in navigazione al tramonto",
-    fadeIn:   [0.72,  0.79],
-    peak:     [0.79,  1.00],
-    fadeOut:  [9.0,   9.0], // mai sbiadisce
+    fadeIn:   [0.575, 0.63],
+    peak:     [0.63,  0.785],
+    fadeOut:  [0.785, 0.84],
     scaleIn: 1.10, scalePeak: 1.06, scaleOut: 1.06,
+  },
+  // ── 4  Partner & Sponsor (underwater) ────────────────────────────────────
+  {
+    img: img5, alt: "Vista subacquea del Mediterraneo al tramonto",
+    fadeIn:   [0.785, 0.84],
+    peak:     [0.84,  1.00],
+    fadeOut:  [9.0,   9.0], // mai sbiadisce
+    scaleIn: 1.02, scalePeak: 1.05, scaleOut: 1.05,
   },
 ];
 
@@ -159,6 +226,7 @@ function slideOpacity(idx: number, p: number): number {
 
 export default function ImmersiveBoatJourney() {
   const containerRef  = useRef<HTMLDivElement>(null);
+  const [showPrivacy, setShowPrivacy] = useState(false);
 
   // Bottone "Scopri di più" — scrolla all'inizio della Phase 1
   const scrollToNext = () => {
@@ -293,7 +361,11 @@ export default function ImmersiveBoatJourney() {
               src={ph.img}
               alt={ph.alt}
               draggable={false}
-              style={i === 2 ? { transform: "scale(1.06)", transformOrigin: "50% 40%" } : undefined}
+              style={
+              i === 2 ? { transform: "scale(1.06)", transformOrigin: "50% 40%" } :
+              i === 4 ? { transform: "scale(1.16)", transformOrigin: "48% 42%" } :
+              undefined
+            }
             />
 
             {/* TV carousel — solo su Phase 2 (img3) */}
@@ -428,6 +500,138 @@ export default function ImmersiveBoatJourney() {
 
           </div>
         </div>
+
+        {/* Phase 4 — Partner & Sponsor (centro, 3 sezioni) */}
+        <div
+          className="bsj-text-anchor bsj-text-anchor--center"
+          style={{ zIndex: 30, top: "50%", bottom: "auto", transform: "translate(-50%, -50%)", maxWidth: "min(94vw, 70rem)" }}
+        >
+          <div
+            ref={(el) => { textRefs.current[4] = el; }}
+            className="bsj-text bsj-text--sponsors"
+            style={{ opacity: 0, pointerEvents: "none", textAlign: "center" }}
+          >
+
+            {/* ── Media Partners ─────────────────────── */}
+            <div className="bsj-spcat">
+              <p className="bsj-spcat__label">Media Partners Serie TV</p>
+              <div className="bsj-spcat__row">
+                {MEDIA_PARTNERS.map((s, i) => (
+                  <a key={i} href={s.url} target="_blank" rel="noreferrer"
+                    className="bsj-sp-tile bsj-sp-tile--lg" aria-label={s.name}>
+                    <img src={s.logo} alt={s.name} className="bsj-sp-logo bsj-sp-logo--lg" draggable={false} />
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Partners Tecnici — ticker ───────────── */}
+            <div className="bsj-spcat">
+              <p className="bsj-spcat__label">Partners Tecnici</p>
+              <div className="bsj-ticker-wrap">
+                <div className="bsj-ticker-track">
+                  {[...TECNICI_PARTNERS, ...TECNICI_PARTNERS].map((s, i) => (
+                    <a key={i} href={s.url} target="_blank" rel="noreferrer"
+                      className="bsj-sp-tile" aria-label={s.name}>
+                      <img src={s.logo} alt={s.name} className="bsj-sp-logo" draggable={false} />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* ── Patrocinato da ─────────────────────── */}
+            <div className="bsj-spcat">
+              <p className="bsj-spcat__label">Patrocinato da</p>
+              <div className="bsj-spcat__row bsj-spcat__row--wrap">
+                {PATROCINI.map((s, i) => (
+                  <a key={i} href={s.url} target="_blank" rel="noreferrer"
+                    className="bsj-sp-tile" aria-label={s.name}>
+                    <img src={s.logo} alt={s.name} className="bsj-sp-logo" draggable={false} />
+                  </a>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* ── Footer ──────────────────────────────────────────── */}
+        <footer className="bsj-footer">
+          <span>© {new Date().getFullYear()} 1500 Miglia Festival. Tutti i diritti riservati.</span>
+          <span className="bsj-footer__sep" aria-hidden="true">·</span>
+          <button className="bsj-footer__link" onClick={() => setShowPrivacy(true)}>
+            Privacy Policy
+          </button>
+        </footer>
+
+        {/* ── Privacy Policy Modal ─────────────────────────────── */}
+        {showPrivacy && (
+          <div className="bsj-modal-overlay" onClick={() => setShowPrivacy(false)} role="dialog" aria-modal="true" aria-label="Privacy Policy">
+            <div className="bsj-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="bsj-modal__header">
+                <h2 className="bsj-modal__title">Privacy Policy</h2>
+                <button className="bsj-modal__close" onClick={() => setShowPrivacy(false)} aria-label="Chiudi">✕</button>
+              </div>
+              <div className="bsj-modal__body">
+                <p className="bsj-modal__update">Ultimo aggiornamento: maggio 2025</p>
+
+                <h3>Titolare del trattamento</h3>
+                <p>
+                  Il presente sito web è gestito da <strong>1500 Miglia Festival</strong>.<br />
+                  Per qualsiasi richiesta relativa ai tuoi dati personali puoi scrivere a:{" "}
+                  <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+                </p>
+
+                <h3>Dati raccolti</h3>
+                <p>
+                  Navigando questo sito, i server registrano automaticamente alcune informazioni
+                  tecniche (indirizzo IP, tipo di browser, sistema operativo, pagine visitate e
+                  orario di accesso) a fini di sicurezza e per garantire il corretto funzionamento
+                  del servizio. Non vengono raccolti dati personali tramite form, account o cookie
+                  di profilazione.
+                </p>
+
+                <h3>Cookie</h3>
+                <p>
+                  Questo sito <strong>non utilizza cookie di profilazione o tracciamento</strong>.
+                  Possono essere presenti esclusivamente cookie tecnici strettamente necessari al
+                  funzionamento della pagina (es. preferenze di navigazione salvate localmente nel
+                  browser). Nessun dato viene trasmesso a terze parti a scopo pubblicitario.
+                </p>
+
+                <h3>Base giuridica e finalità</h3>
+                <p>
+                  I dati tecnici di navigazione vengono trattati sulla base del legittimo interesse
+                  del titolare (art. 6, par. 1, lett. f del GDPR) al solo fine di garantire la
+                  sicurezza e il corretto funzionamento del sito.
+                </p>
+
+                <h3>Conservazione dei dati</h3>
+                <p>
+                  I log tecnici vengono conservati per il tempo strettamente necessario alle
+                  finalità sopra indicate e comunque non oltre 12 mesi.
+                </p>
+
+                <h3>Diritti degli utenti</h3>
+                <p>
+                  Ai sensi degli artt. 15–22 del GDPR hai diritto di accedere ai tuoi dati,
+                  richiederne la rettifica o la cancellazione, opporti al trattamento e proporre
+                  reclamo all'autorità di controllo (Garante per la protezione dei dati personali –{" "}
+                  <a href="https://www.garanteprivacy.it" target="_blank" rel="noreferrer">www.garanteprivacy.it</a>).
+                  Per esercitare tali diritti scrivi a:{" "}
+                  <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+                </p>
+
+                <p className="bsj-modal__disclaimer">
+                  Questa informativa è da intendersi come documento placeholder. Si raccomanda di
+                  farla revisionare da un professionista legale prima della pubblicazione ufficiale
+                  del sito.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ── Scroll hint ─────────────────────────────────────── */}
         <div ref={scrollHintRef} className="ibj-scroll-hint" aria-hidden="true">
