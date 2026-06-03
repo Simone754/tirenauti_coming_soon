@@ -1,33 +1,36 @@
 /**
- * ImmersiveBoatJourney — 5 fasi
+ * ImmersiveBoatJourney — 6 fasi
  *
- *  0  img1  Coming Soon
- *  1  img2  10 tappe / 6 regioni / 2 mesi
- *  2  img3  Carosello slide dentro lo schermo TV
- *  3  img4  Entra nella crew + contatti
- *  4  img5  Partner & Sponsor (underwater)
+ *  0  img6  Chi Siamo — I Tirenauti
+ *  1  img1  Coming Soon
+ *  2  img2  10 tappe / 6 regioni / 2 mesi
+ *  3  img3  Carosello slide dentro lo schermo TV
+ *  4  img4  Entra nella crew + contatti
+ *  5  img5  Partner & Sponsor (underwater)
  *
  * Pure RAF + scroll — zero dipendenze esterne.
  */
 
 import { useEffect, useRef, useState } from "react";
-import whiteLogo    from "../../ppt_refs/slide1-white-logo.png";
-import logoMark     from "../../assets/tirrenauti-mark.png";
-import logoWordmark from "../../assets/1500-miglia-festival-logo.png";
-import socialIG  from "../../assets/social-instagram.png";
-import socialFB  from "../../assets/social-facebook.png";
-import socialWA  from "../../assets/social-whatsapp.png";
-import img1 from "../../immagine1.png";
-import img2 from "../../immagine2.png";
-import img3 from "../../immagine3.png";
-import img4 from "../../immagone4.png";
-import img5 from "../../immagine5.png";
-import slide1 from "../../slide1.png";
-import slide2 from "../../slide2.png";
-import slide3 from "../../slide3.png";
-import slide4 from "../../slide4.png";
-import slide5 from "../../slide5.png";
-import slide6 from "../../slide6.png";
+import whiteLogo     from "../assets/logos/slide1-white-logo.png";
+import logoMark      from "../assets/logos/tirrenauti-mark.png";
+import logoTirenauti from "../assets/logos/LogoTirenauti.png";
+import logoWordmark  from "../assets/logos/1500-miglia-festival-logo.png";
+import socialIG  from "../assets/social/social-instagram.png";
+import socialFB  from "../assets/social/social-facebook.png";
+import socialWA  from "../assets/social/social-whatsapp.png";
+import img1 from "../assets/backgrounds/immagine1.png";
+import img2 from "../assets/backgrounds/immagine2.png";
+import img6 from "../assets/backgrounds/immagine6.png";
+import img3 from "../assets/backgrounds/immagine3.png";
+import img4 from "../assets/backgrounds/immagine4.png";
+import img5 from "../assets/backgrounds/immagine5.png";
+import slide1 from "../assets/slides/slide1.png";
+import slide2 from "../assets/slides/slide2.png";
+import slide3 from "../assets/slides/slide3.png";
+import slide4 from "../assets/slides/slide4.png";
+import slide5 from "../assets/slides/slide5.png";
+import slide6 from "../assets/slides/slide6.png";
 
 const SLIDES = [slide1, slide2, slide3, slide4, slide5, slide6];
 
@@ -35,7 +38,7 @@ const SLIDES = [slide1, slide2, slide3, slide4, slide5, slide6];
 // Media Partners (3)
 import spM1 from "../assets/sponsors/mediapartner1.png";
 import spM2 from "../assets/sponsors/mediapartner2.png";
-import spM3 from "../assets/sponsors/media partner3.png";
+import spM3 from "../assets/sponsors/mediapartner3.png";
 // Partners Tecnici (12)
 import spT1  from "../assets/sponsors/sponsor-10.png";
 import spT2  from "../assets/sponsors/sponsor-11.png";
@@ -114,52 +117,60 @@ interface Phase {
 }
 
 const PHASES: Phase[] = [
-  // ── 0  Coming Soon ────────────────────────────────────────────────────────
+  // ── 0  Chi Siamo — I Tirenauti ───────────────────────────────────────────
+  {
+    img: img6, alt: "La crew dei Tirenauti in navigazione al tramonto",
+    fadeIn:   [-0.01, 0.00],
+    peak:     [0.00,  0.12],
+    fadeOut:  [0.12,  0.17],
+    scaleIn: 1.00, scalePeak: 1.04, scaleOut: 1.07,
+  },
+  // ── 1  Coming Soon ────────────────────────────────────────────────────────
   {
     img: img1, alt: "Barca a vela al tramonto sul Tirreno",
-    fadeIn:   [-0.01, 0.00],
-    peak:     [0.00,  0.155],
-    fadeOut:  [0.155, 0.21],
+    fadeIn:   [0.12,  0.17],
+    peak:     [0.17,  0.30],
+    fadeOut:  [0.30,  0.35],
     scaleIn: 1.00, scalePeak: 1.05, scaleOut: 1.08,
   },
-  // ── 1  Le cifre ────────────────────────────────────────────────────────────
+  // ── 2  Le cifre ────────────────────────────────────────────────────────────
   {
     img: img2, alt: "Vista dal ponte della barca al tramonto",
-    fadeIn:   [0.155, 0.21],
-    peak:     [0.21,  0.365],
-    fadeOut:  [0.365, 0.42],
+    fadeIn:   [0.30,  0.35],
+    peak:     [0.35,  0.49],
+    fadeOut:  [0.49,  0.54],
     scaleIn: 1.06, scalePeak: 1.10, scaleOut: 1.13,
   },
-  // ── 2  Salotto (TV carousel) ───────────────────────────────────────────────
+  // ── 3  Salotto (TV carousel) ───────────────────────────────────────────────
   {
     img: img3, alt: "Interno lussuoso della barca — salotto con TV",
-    fadeIn:   [0.365, 0.42],
-    peak:     [0.42,  0.575],
-    fadeOut:  [0.575, 0.63],
+    fadeIn:   [0.49,  0.54],
+    peak:     [0.54,  0.66],
+    fadeOut:  [0.66,  0.71],
     scaleIn: 1.11, scalePeak: 1.14, scaleOut: 1.11,
   },
-  // ── 3  Crew + contatti ────────────────────────────────────────────────────
+  // ── 4  Crew + contatti ────────────────────────────────────────────────────
   {
     img: img4, alt: "Barca con vela colorata in navigazione al tramonto",
-    fadeIn:   [0.575, 0.63],
-    peak:     [0.63,  0.785],
-    fadeOut:  [0.785, 0.84],
+    fadeIn:   [0.66,  0.71],
+    peak:     [0.71,  0.84],
+    fadeOut:  [0.84,  0.89],
     scaleIn: 1.10, scalePeak: 1.06, scaleOut: 1.06,
   },
-  // ── 4  Partner & Sponsor (underwater) ────────────────────────────────────
+  // ── 5  Partner & Sponsor (underwater) ────────────────────────────────────
   {
     img: img5, alt: "Vista subacquea del Mediterraneo al tramonto",
-    fadeIn:   [0.785, 0.84],
-    peak:     [0.84,  1.00],
+    fadeIn:   [0.84,  0.89],
+    peak:     [0.89,  1.00],
     fadeOut:  [9.0,   9.0], // mai sbiadisce
     scaleIn: 1.02, scalePeak: 1.05, scaleOut: 1.05,
   },
 ];
 
-// TV carousel range (dentro il peak di Phase 2)
-const TV_START = PHASES[2].peak[0]; // 0.54
-const TV_END   = PHASES[2].fadeOut[0]; // 0.72
-const TV_RANGE = TV_END - TV_START;   // 0.18
+// TV carousel range (dentro il peak di Phase 3)
+const TV_START = PHASES[3].peak[0]; // 0.54
+const TV_END   = PHASES[3].fadeOut[0]; // 0.66
+const TV_RANGE = TV_END - TV_START;   // 0.12
 
 // ─── Animation helpers ────────────────────────────────────────────────────────
 
@@ -237,6 +248,7 @@ export default function ImmersiveBoatJourney() {
   };
   const progressRef   = useRef<HTMLDivElement>(null);
   const scrollHintRef = useRef<HTMLDivElement>(null);
+  const logoRef       = useRef<HTMLDivElement>(null);
   const imgRefs       = useRef<(HTMLDivElement | null)[]>(PHASES.map(() => null));
   const textRefs      = useRef<(HTMLDivElement | null)[]>(PHASES.map(() => null));
   const slideRefs     = useRef<(HTMLImageElement | null)[]>(SLIDES.map(() => null));
@@ -288,6 +300,14 @@ export default function ImmersiveBoatJourney() {
         const el = slideRefs.current[si];
         if (!el) continue;
         el.style.opacity = slideOpacity(si, p).toFixed(3);
+      }
+
+      // Logo Chi Siamo — stessa visibilità del textRef[0]
+      if (logoRef.current) {
+        const { o, ty } = textVis(PHASES[0], p);
+        logoRef.current.style.opacity       = o.toFixed(3);
+        logoRef.current.style.transform     = `translateY(${ty.toFixed(1)}px)`;
+        logoRef.current.style.pointerEvents = o > 0.05 ? "auto" : "none";
       }
 
       // Text overlays (tutte le fasi inclusa la 2 con pannello descrittivo)
@@ -362,14 +382,14 @@ export default function ImmersiveBoatJourney() {
               alt={ph.alt}
               draggable={false}
               style={
-              i === 2 ? { transform: "scale(1.06)", transformOrigin: "50% 40%" } :
-              i === 4 ? { transform: "scale(1.16)", transformOrigin: "48% 42%" } :
+              i === 3 ? { transform: "scale(1.06)", transformOrigin: "50% 40%" } :
+              i === 5 ? { transform: "scale(1.16)", transformOrigin: "48% 42%" } :
               undefined
             }
             />
 
-            {/* TV carousel — solo su Phase 2 (img3) */}
-            {i === 2 && (
+            {/* TV carousel — solo su Phase 3 (img3) */}
+            {i === 3 && (
               <div className="bsj-tv-overlay" aria-hidden="true">
                 {SLIDES.map((slide, si) => (
                   <img
@@ -389,10 +409,65 @@ export default function ImmersiveBoatJourney() {
 
         {/* ── Text overlays ───────────────────────────────────── */}
 
-        {/* Phase 0 — Coming Soon (sinistra) */}
-        <div className="bsj-text-anchor bsj-text-anchor--left" style={{ zIndex: 30, bottom: "clamp(26vh, 34vh, 20rem)" }}>
+        {/* Phase 0 — Chi Siamo / I Tirenauti (sinistra) */}
+        <div className="bsj-text-anchor bsj-text-anchor--left" style={{ zIndex: 30, top: "clamp(8rem, 22vh, 16rem)", bottom: "auto" }}>
           <div
             ref={(el) => { textRefs.current[0] = el; }}
+            className="bsj-text"
+            style={{ opacity: 0, pointerEvents: "none" }}
+          >
+            <p className="bsj-text__label">I Tirenauti</p>
+            <h2 className="bsj-text__title">
+              <span className="bsj-text__title-line">Un popolo</span>
+              <span className="bsj-text__title-line bsj-text__title-line--cyan">del mare</span>
+            </h2>
+            <p className="bsj-text__desc">
+              Un popolo immaginario che esiste solo nel movimento e nello scambio
+              di idee. Discendenti di Ulisse, portano storie, musica e sapori da
+              porto in porto — non spettacoli, ma incontri generativi di arte,
+              scienza e cucina.
+            </p>
+            <div className="bsj-stats" style={{ justifyContent: "flex-start", marginTop: "1.2rem" }}>
+              <div className="bsj-stat" style={{ paddingLeft: 0 }}>
+                <span className="bsj-stat__num">40</span>
+                <span className="bsj-stat__label">Tirenauti</span>
+              </div>
+              <div className="bsj-stat__divider" aria-hidden="true" />
+              <div className="bsj-stat">
+                <span className="bsj-stat__num">10</span>
+                <span className="bsj-stat__label">Barche</span>
+              </div>
+            </div>
+            <button className="bsj-scroll-cta" onClick={scrollToNext}>
+              Scopri di più
+              <span className="bsj-scroll-cta__arrow" aria-hidden="true">↓</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Phase 0 — Logo Tirenauti (destra, centrato verticalmente) */}
+        <div className="chiSiamo-logo-wrap">
+          <div
+            ref={logoRef}
+            style={{ opacity: 0, pointerEvents: "none", willChange: "opacity, transform" }}
+          >
+            <img
+              src={logoTirenauti}
+              alt="Logo Tirenauti"
+              draggable={false}
+              style={{
+                width: "clamp(14rem, 26vw, 22rem)",
+                height: "auto",
+                filter: "drop-shadow(0 0 3rem rgba(255,255,255,0.15)) drop-shadow(0 0 1.2rem rgba(32,200,255,0.22))",
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Phase 1 — Coming Soon (sinistra) */}
+        <div className="bsj-text-anchor bsj-text-anchor--left" style={{ zIndex: 30, bottom: "clamp(26vh, 34vh, 20rem)" }}>
+          <div
+            ref={(el) => { textRefs.current[1] = el; }}
             className="bsj-text"
             style={{ opacity: 0, pointerEvents: "none" }}
           >
@@ -404,17 +479,13 @@ export default function ImmersiveBoatJourney() {
             <p className="bsj-text__desc">
               Un'esperienza unica tra mare, musica e libertà lungo le coste del Tirreno.
             </p>
-            <button className="bsj-scroll-cta" onClick={scrollToNext}>
-              Scopri di più
-              <span className="bsj-scroll-cta__arrow" aria-hidden="true">↓</span>
-            </button>
           </div>
         </div>
 
-        {/* Phase 1 — Titolo + stats (sinistra) */}
+        {/* Phase 2 — Titolo + stats (sinistra) */}
         <div className="bsj-text-anchor bsj-text-anchor--left" style={{ zIndex: 30, bottom: "clamp(18vh, 24vh, 16rem)" }}>
           <div
-            ref={(el) => { textRefs.current[1] = el; }}
+            ref={(el) => { textRefs.current[2] = el; }}
             className="bsj-text"
             style={{ opacity: 0, pointerEvents: "none" }}
           >
@@ -445,10 +516,10 @@ export default function ImmersiveBoatJourney() {
           </div>
         </div>
 
-        {/* Phase 2 — descrizione festival (destra, accanto alla TV) */}
+        {/* Phase 3 — descrizione festival (destra, accanto alla TV) */}
         <div className="bsj-text-anchor bsj-text-anchor--right" style={{ zIndex: 30 }}>
           <div
-            ref={(el) => { textRefs.current[2] = el; }}
+            ref={(el) => { textRefs.current[3] = el; }}
             className="bsj-text bsj-text--tvdesc"
             style={{ opacity: 0, pointerEvents: "none" }}
           >
@@ -461,10 +532,10 @@ export default function ImmersiveBoatJourney() {
           </div>
         </div>
 
-        {/* Phase 3 — Crew + contatti (sinistra, testo centrato) */}
+        {/* Phase 4 — Crew + contatti (sinistra, testo centrato) */}
         <div className="bsj-text-anchor bsj-text-anchor--left" style={{ zIndex: 30, bottom: "clamp(24vh, 30vh, 21rem)" }}>
           <div
-            ref={(el) => { textRefs.current[3] = el; }}
+            ref={(el) => { textRefs.current[4] = el; }}
             className="bsj-text bsj-text--crew bsj-text--hero"
             style={{ opacity: 0, pointerEvents: "none", textAlign: "center" }}
           >
@@ -501,13 +572,13 @@ export default function ImmersiveBoatJourney() {
           </div>
         </div>
 
-        {/* Phase 4 — Partner & Sponsor (centro, 3 sezioni) */}
+        {/* Phase 5 — Partner & Sponsor (centro, 3 sezioni) */}
         <div
           className="bsj-text-anchor bsj-text-anchor--center"
           style={{ zIndex: 30, top: "50%", bottom: "auto", transform: "translate(-50%, -50%)", maxWidth: "min(94vw, 70rem)" }}
         >
           <div
-            ref={(el) => { textRefs.current[4] = el; }}
+            ref={(el) => { textRefs.current[5] = el; }}
             className="bsj-text bsj-text--sponsors"
             style={{ opacity: 0, pointerEvents: "none", textAlign: "center" }}
           >
